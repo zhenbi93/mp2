@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { useEffect, useMemo, useState } from 'react'
 import type { FormEvent, SyntheticEvent } from 'react'
-import { Link, Route, Routes, useNavigate, useParams } from 'react-router-dom'
+import { Link, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
 import './App.css'
 
 type Bean = {
@@ -377,6 +377,7 @@ function App() {
 
   return (
     <div className="app-shell">
+      <HashScroller />
       {error && <p className="status-banner">{error}</p>}
 
       <Routes>
@@ -399,6 +400,26 @@ function App() {
       </Routes>
     </div>
   )
+}
+
+function HashScroller() {
+  const { hash, pathname } = useLocation()
+
+  useEffect(() => {
+    if (!hash) {
+      if (pathname === '/') {
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      }
+      return
+    }
+
+    const targetId = decodeURIComponent(hash.slice(1))
+    window.requestAnimationFrame(() => {
+      document.getElementById(targetId)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+  }, [hash, pathname])
+
+  return null
 }
 
 type HomePageProps = {
